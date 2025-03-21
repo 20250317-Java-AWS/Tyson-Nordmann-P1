@@ -1,0 +1,24 @@
+<h2>Search Results</h2>
+<button (click)="goBack()">Enter a new search</button>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Host Star</th>
+      <th>Radius (Earth)</th>
+      <th>Orbital Period (Days)</th>
+      <th>Distance from Star (AU)</th>
+      <th>Distance from our Sun (AU)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let planet of filteredExoplanets">
+      <td>{{ planet.pl_name }}</td>
+      <td>{{ planet.hostname }}</td>
+      <td>{{ planet.pl_rade || 'N/A' }}</td>
+      <td>{{ planet.pl_orbper || 'N/A' }}</td>
+      <td>{{ planet.pl_orbsmax || 'N/A' }}</td>
+      <td>{{ planet.solarDistance || 'N/A' }}</td>
+    </tr>
+  </tbody>
+</table>

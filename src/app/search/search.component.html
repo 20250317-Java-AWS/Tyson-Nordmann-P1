@@ -1,0 +1,39 @@
+
+<div class="container">
+    <h2> Exoplanet Explorer</h2>
+
+    <label>Min Planet Radius (Earth Radii):</label>
+    <input type="number" [(ngModel)]="minRadius" placeholder="e.g. 0.5">
+
+    <label>Max Planet Radius (Earth Radii):</label>
+    <input type="number" [(ngModel)]="maxRadius" placeholder="e.g. 10">
+  
+    
+    <label>Min Orbital Period (Days):</label>
+    <input type="number" [(ngModel)]="minOrbitalPeriod" placeholder="e.g. 5">
+  
+    <label>Max Orbital Period (Days):</label>
+    <input type="number" [(ngModel)]="maxOrbitalPeriod" placeholder="e.g. 1000">
+  
+
+    <label>Min Distance from Star (AU):</label>
+    <input type="number" [(ngModel)]="minStarDistance" placeholder="e.g. 0.1">
+  
+    <label>Max Distance from Star (AU):</label>
+    <input type="number" [(ngModel)]="maxStarDistance" placeholder="e.g. 10">
+  
+ 
+    <label>Limit Results:</label>
+    <input type="number" [(ngModel)]="resultLimit" placeholder="e.g. 50">
+
+    <label for="minStellarDistance">Min Stellar Distance (AU):</label>
+    <input type="number" id="minStellarDistance" [(ngModel)]="minStellarDistance" placeholder="e.g. 100,000">>
+
+    <label for="maxStellarDistance">Max Stellar Distance (AU):</label>
+    <input type="number" id="maxStellarDistance" [(ngModel)]="maxStellarDistance" placeholder="e.g. 100,000,000,000">
+  
+  
+    <button (click)="search()">🔍 Search</button>
+  </div>
+    
+    
