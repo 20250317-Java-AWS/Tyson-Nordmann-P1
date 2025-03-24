@@ -31,20 +31,22 @@ export class ResultsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      const minRadius = parseFloat(params['minRadius']) || 0;
-      const maxRadius = parseFloat(params['maxRadius']) || 0;
-      const minOrbitalPeriod = parseFloat(params['minOrbitalPeriod']) || 0;
-      const maxOrbitalPeriod = parseFloat(params['maxOrbitalPeriod']) || 0;
-      const minDistance = parseFloat(params['minDistance']) || 0;
-      const maxDistance = parseFloat(params['maxDistance']) || 15;
-      const minStellarDistance = parseFloat(params['minStellarDistance']) || 0;
-      const maxStellarDistance = parseFloat(params['maxStellarDistance']) || 50000;
+      const minRadius = params ['minRadius'] ? parseFloat(params['minRadius']) : undefined;
+      const maxRadius = params ['maxRadius'] ? parseFloat(params['maxRadius']) : undefined;
+      const minOrbitalPeriod = params ['minOrbitalPeriod'] ? parseFloat(params['minOrbitalPeriod']) : undefined;
+      const maxOrbitalPeriod = params ['maxOrbitalPeriod'] ? parseFloat(params['maxOrbitalPeriod']) : undefined;
+      const minDistance = params ['minDistance'] ? parseFloat(params['minDistance']) : undefined;
+      const maxDistance = params ['maxDistance'] ? parseFloat(params['maxDistance']) : undefined;
+      const minStellarDistance = params ['minStellarDistance'] ? parseFloat(params['minStellarDistance']) : undefined;
+      const maxStellarDistance = params ['maxStellarDistance'] ? parseFloat(params['maxStellarDistance']) : undefined;
+      const resultLimit = params['resultLimit'] ? parseInt(params['resultLimit']) : 50;
 
       this.exoplanetService.getExoplanets(
+        resultLimit,
         minRadius, maxRadius, 
         minOrbitalPeriod, maxOrbitalPeriod, 
         minDistance, maxDistance, 
-        50
+      
       ).subscribe(data => {
         console.log("API Response:", data); 
         if (Array.isArray(data)) {
@@ -75,11 +77,17 @@ export class ResultsComponent implements OnInit {
 
           // Use forkJoin to wait until all distance observables complete.
           forkJoin(distanceObservables).subscribe(() => {
+           
             // Now filter by stellar distance (which is in parsecs).
-            this.filteredExoplanets = this.filteredExoplanets.filter(planet => 
-              (planet.solarDistance ?? 0) >= minStellarDistance && 
-              (planet.solarDistance ?? 0) <= maxStellarDistance
-            );
+            this.filteredExoplanets = this.filteredExoplanets.filter(planet => {
+              const dist = planet.solarDistance ?? 0;
+              const meetsMin = minStellarDistance !== undefined ? dist >= minStellarDistance : true;
+              const meetsMax = maxStellarDistance !== undefined ? dist <= maxStellarDistance : true;
+              return meetsMin && meetsMax;
+            });
+             // (planet.solarDistance ?? 0) >= minStellarDistance && 
+             // (planet.solarDistance ?? 0) <= maxStellarDistance
+          
             console.log("Filtered by Stellar Distance:", this.filteredExoplanets);
           });
         } else {
