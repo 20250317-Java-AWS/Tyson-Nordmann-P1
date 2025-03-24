@@ -5,6 +5,8 @@ import { Exoplanet } from '../models/exoplanet.model';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StellarDistanceService } from '../services/stellar-distance.service';
+import { forkJoin, of } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-results',
@@ -48,29 +50,38 @@ export class ResultsComponent implements OnInit {
         if (Array.isArray(data)) {
           this.exoplanets = data;
 
-          this.filteredExoplanets = this.exoplanets.filter(exoplanet => 
-            (exoplanet.pl_rade ?? 0) >= minRadius &&
-            (exoplanet.pl_rade ?? 0) <= maxRadius &&
-            (exoplanet.pl_orbper ?? 0) >= minOrbitalPeriod &&
-            (exoplanet.pl_orbper ?? 0) <= maxOrbitalPeriod &&
-            (exoplanet.pl_orbsmax ?? 0) >= minDistance &&
-            (exoplanet.pl_orbsmax ?? 0) <= maxDistance
-          );
-
-          // Fetch stellar distances for each planet
-          this.filteredExoplanets.forEach(planet => {
+          // Assign the filtered list to all exoplanets initially.
+          this.filteredExoplanets = this.exoplanets;
+          
+          // Build an array of observables to fetch stellar distances for each planet.
+          const distanceObservables = this.filteredExoplanets.map(planet => {
             if (planet.hostname) {
-              this.stellarDistanceService.getDistance(planet.hostname).subscribe(distData => {
-                if (Array.isArray(distData) && distData.length > 0) {
-                  planet.solarDistance = distData[0].sys_dist || 'N/A';
-                } 
-              });
+              // Return an observable that updates the planet's solarDistance.
+              return this.stellarDistanceService.getDistance(planet.hostname).pipe(
+                tap(distData => {
+                  // Fixed: Removed extra parenthesis in the if statement.
+                  if (Array.isArray(distData) && distData.length > 0) {
+                    planet.solarDistance = distData[0].sy_dist || 0;
+                  } else {
+                    planet.solarDistance = 0;
+                  }
+                })
+              );
+            } else {
+              // If there's no hostname, return an observable that completes.
+              return of(null);
             }
           });
-         // this.filteredExoplanets = this.filteredExoplanets.filter(planet => 
-       //   (planet.solarDistance ?? 0) >= minStellarDistance && 
-        //  (planet.solarDistance ?? 0) <= maxStellarDistance
-        //  );
+
+          // Use forkJoin to wait until all distance observables complete.
+          forkJoin(distanceObservables).subscribe(() => {
+            // Now filter by stellar distance (which is in parsecs).
+            this.filteredExoplanets = this.filteredExoplanets.filter(planet => 
+              (planet.solarDistance ?? 0) >= minStellarDistance && 
+              (planet.solarDistance ?? 0) <= maxStellarDistance
+            );
+            console.log("Filtered by Stellar Distance:", this.filteredExoplanets);
+          });
         } else {
           console.error("Expected an array but got:", typeof data);
         }

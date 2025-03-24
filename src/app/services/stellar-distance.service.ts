@@ -9,7 +9,9 @@ export class StellarDistanceService {
   constructor(private http: HttpClient) { }
 
 getDistance(hostname: string): Observable<any>{
-  const query = `SELECT sy_dist FROM ps WHERE hostname ='${hostname}'`;
+  const safeHostname = hostname.replace(/'/g, "''");
+  
+  const query = `SELECT sy_dist FROM ps WHERE hostname ='${safeHostname}'`;
   const apiUrl = `${this.baseUrl}?query=${encodeURIComponent(query)}&format=json`;
 
   return this.http.get<any>(apiUrl);

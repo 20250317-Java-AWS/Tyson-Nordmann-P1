@@ -26,11 +26,11 @@
     <label>Limit Results:</label>
     <input type="number" [(ngModel)]="resultLimit" placeholder="e.g. 50">
 
-    <label for="minStellarDistance">Min Stellar Distance (AU):</label>
-    <input type="number" id="minStellarDistance" [(ngModel)]="minStellarDistance" placeholder="e.g. 100,000">>
+    <label for="minStellarDistance">Min Stellar Distance (parsecs):</label>
+    <input type="number" id="minStellarDistance" [(ngModel)]="minStellarDistance" placeholder="e.g. 1">
 
-    <label for="maxStellarDistance">Max Stellar Distance (AU):</label>
-    <input type="number" id="maxStellarDistance" [(ngModel)]="maxStellarDistance" placeholder="e.g. 100,000,000,000">
+    <label for="maxStellarDistance">Max Stellar Distance (parsecs):</label>
+    <input type="number" id="maxStellarDistance" [(ngModel)]="maxStellarDistance" placeholder="e.g. 100,000">
   
   
     <button (click)="search()">🔍 Search</button>
