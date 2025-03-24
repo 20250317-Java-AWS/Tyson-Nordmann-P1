@@ -12,7 +12,7 @@ import { tap, map } from 'rxjs/operators';
   selector: 'app-results',
   imports: [CommonModule],
   templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css']  // Fixed: styleUrls (plural)
+  styleUrls: ['./results.component.css']  
 })
 export class ResultsComponent implements OnInit {
   exoplanets: Exoplanet[] = [];
@@ -53,16 +53,16 @@ export class ResultsComponent implements OnInit {
         if (Array.isArray(data)) {
           this.exoplanets = data;
 
-          // Assign the filtered list to all exoplanets initially.
+          
           this.filteredExoplanets = this.exoplanets;
           
-          // Build an array of observables to fetch stellar distances for each planet.
+         
           const distanceObservables = this.filteredExoplanets.map(planet => {
             if (planet.hostname) {
-              // Return an observable that updates the planet's solarDistance.
+             
               return this.stellarDistanceService.getDistance(planet.hostname).pipe(
                 tap(distData => {
-                  // Fixed: Removed extra parenthesis in the if statement.
+               
                   if (Array.isArray(distData) && distData.length > 0) {
                     planet.solarDistance = distData[0].sy_dist || 0;
                   } else {
@@ -71,23 +71,22 @@ export class ResultsComponent implements OnInit {
                 })
               );
             } else {
-              // If there's no hostname, return an observable that completes.
+          
               return of(null);
             }
           });
 
-          // Use forkJoin to wait until all distance observables complete.
+         
           forkJoin(distanceObservables).subscribe(() => {
            
-            // Now filter by stellar distance (which is in parsecs).
+        
             this.filteredExoplanets = this.filteredExoplanets.filter(planet => {
               const dist = planet.solarDistance ?? 0;
               const meetsMin = minStellarDistance !== undefined ? dist >= minStellarDistance : true;
               const meetsMax = maxStellarDistance !== undefined ? dist <= maxStellarDistance : true;
               return meetsMin && meetsMax;
             });
-             // (planet.solarDistance ?? 0) >= minStellarDistance && 
-             // (planet.solarDistance ?? 0) <= maxStellarDistance
+           
           
             console.log("Filtered by Stellar Distance:", this.filteredExoplanets);
           });
