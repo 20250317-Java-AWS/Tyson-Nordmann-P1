@@ -40,12 +40,13 @@ export class ResultsComponent implements OnInit {
       const minStellarDistance = params ['minStellarDistance'] ? parseFloat(params['minStellarDistance']) : undefined;
       const maxStellarDistance = params ['maxStellarDistance'] ? parseFloat(params['maxStellarDistance']) : undefined;
       const resultLimit = params['resultLimit'] ? parseInt(params['resultLimit']) : 50;
+      const searchName = params['searchName'] ? params['searchName'].trim() : undefined;
 
       this.exoplanetService.getExoplanets(
         resultLimit,
         minRadius, maxRadius, 
         minOrbitalPeriod, maxOrbitalPeriod, 
-        minDistance, maxDistance, 
+        minDistance, maxDistance, searchName,
       
       ).subscribe(data => {
         console.log("API Response:", data); 

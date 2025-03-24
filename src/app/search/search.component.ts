@@ -18,12 +18,15 @@ export class SearchComponent {
   maxStarDistance?: number;
   minStellarDistance?: number;
   maxStellarDistance?: number;
+  searchName?: string;
   resultLimit: number = 50;
 
   constructor(private router: Router) {}
 
   search() {
+    console.log("Search Name:", this.searchName);
     this.router.navigate(['/results'], {
+     
       queryParams: {
         minRadius: this.minRadius,
         maxRadius: this.maxRadius,
@@ -33,6 +36,7 @@ export class SearchComponent {
         maxStarDistance: this.maxStarDistance,
         minStellarDistance: this.minStarDistance,
         maxStellarDistance: this.maxStellarDistance,
+        searchName: this.searchName,
         resultLimit: this.resultLimit
       }
     });
